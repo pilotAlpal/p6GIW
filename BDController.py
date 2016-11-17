@@ -62,8 +62,7 @@ def existeLibro(nombreLibro):
     for i in libros:
         aux = i
     cur.close()
-    con.commit() 
-    aux = False
+    con.commit()
     if (len(aux) > 0): return True
     else: return False    
     

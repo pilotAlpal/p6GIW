@@ -47,6 +47,24 @@ def do_registro():
         BDController.AniadirUsuario(username, password)  
         return "<p>REGISTRO CORRECTO</p>" + login()
         
+@route('/addBook')
+def addBook():
+    return '''<form action="/addBook" method="post">
+            Nombre del Libro: <input name="nombreLibro" type="text" />
+            Autor: <input name="autor" type="text" />
+            Genero    <input name="genero" tyoe="text" />
+            <input value="Login" type="submit" />
+        </form>'''
+@route('/addBook', method='POST')
+def do_addBook():
+    nombreLibro = request.forms.get('nombreLibro')
+    genero = request.forms.get('genero')
+    autor = request.forms.get('autor')
+    if BDController.existeLibro(nombreLibro):
+        return "<p>Ya existe este libro</p>"
+    else:
+        BDController.AniadirLibro(nombreLibre, autor, genero)
+        return "<p>Libro añadido correctamente</p>"
 @route('/main')
 def main():
     return '''<p>Gestion de Biblioteca Online</p>
