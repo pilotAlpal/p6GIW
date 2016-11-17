@@ -63,6 +63,7 @@ def existeLibro(nombreLibro):
         aux = i
     cur.close()
     con.commit() 
+    aux = False
     if (len(aux) > 0): return True
     else: return False    
     
