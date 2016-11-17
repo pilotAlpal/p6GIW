@@ -63,7 +63,7 @@ def do_addBook():
     if BDController.existeLibro(nombreLibro):
         return "<p>Ya existe este libro</p>"
     else:
-        BDController.AniadirLibro(nombreLibre, autor, genero)
+        BDController.AniadirLibro(nombreLibro, autor, genero)
         return "<p>Libro añadido correctamente</p>"
 @route('/main')
 def main():
