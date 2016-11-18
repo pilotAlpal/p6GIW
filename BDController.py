@@ -54,18 +54,44 @@ def existeUsuario(username):
     if (len(aux) > 0): return True
     else: return False
     
-    
-    
-def existeLibro(nombre):
+def existeLibro(nombre):   
+    a=getLibro(nombre)
+    if(a==()):
+        return False
+    return True
+def getLibro(nombre):
     con=sqlite3.connect("Libreria.sqlite3")
     cur=con.cursor()
-    libros= cur.execute("SELECT titulo,autor,genero FROM Libros WHERE titulo=?",(nombre,))
+    libros= cur.execute("SELECT * FROM Libros WHERE titulo=?",(nombre,))
     aux = ()
     for i in libros:
         aux = i
     cur.close()
     con.commit()
     return  aux
+    
+def existeGenero(gen):
+    con=sqlite3.connect("Libreria.sqlite3")
+    cur=con.cursor()
+    libros= cur.execute("SELECT * FROM Libros WHERE genero=?",(gen,))
+    aux = ()
+    for i in libros:
+        aux = i
+    cur.close()
+    con.commit()
+    return  aux
+
+def existeAutor(nombre):
+    con=sqlite3.connect("Libreria.sqlite3")
+    cur=con.cursor()
+    libros= cur.execute("SELECT * FROM Libros WHERE titulo=?",(nombre,))
+    aux = ()
+    for i in libros:
+        aux = i
+    cur.close()
+    con.commit()
+    return  aux
+
     
     
 def AniadirLibro(titulo,autor,genero):
@@ -148,4 +174,6 @@ def ValidaLogin(name,password):
     else:
         return False
     cur.close()
+    
+print existeLibro("El Quijote")
     
