@@ -58,7 +58,7 @@ def addBook():
                 Nombre del Libro: <input name="nombreLibro" type="text" />
                 Autor: <input name="autor" type="text" />
                 Genero    <input name="genero" tyoe="text" />
-                <input value="Login" type="submit" />
+                <input value="Introducir" type="submit" />
             </form>'''
     else:
         return "<p>Zona Restringida</p>" + inicio()
@@ -109,7 +109,7 @@ def eliminarLibro():
 def do_eliminarLibro():
     nombreLibro = request.forms.get('nombreLibro')
     if BDController.existeLibro(nombreLibro):
-        BDController.BorrarLibro(nombreLibro)
+        BDController.eliminaLibro(nombreLibro)
         return "<p>Libro borrado correctamente</p>" + main()
     else:
         return "<p>Libro no existe</p>"+ eliminarLibro()
@@ -138,6 +138,22 @@ def do_buscarLibro():
     nombreLibro = request.forms.get('nombreLibro')
     if BDController.existeLibro(nombreLibro):
         datos = BDController.getLibro(nombreLibro)
+        return template("template_lista.tpl", lista=datos)
+    else:
+        return "<p>Libro no existe</p>"
+@route('/buscarLibroPorGenero', method='POST')
+def do_buscarLibroPorGenero():
+    nombreLibro = request.forms.get('genero')
+    if BDController.existeGenero(nombreLibro):
+        datos = BDController.getGenero(nombreLibro)
+        return template("template_lista.tpl", lista=datos)
+    else:
+        return "<p>Genero no existe</p>"
+@route('/buscarLibroPorAutor', method='POST')
+def do_buscarLibroPorAutor():
+    nombreLibro = request.forms.get('autor')
+    if BDController.existeAutor(nombreLibro):
+        datos = BDController.getAutor(nombreLibro)
         return template("template_lista.tpl", lista=datos)
     else:
         return "<p>Libro no existe</p>"
