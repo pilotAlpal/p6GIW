@@ -207,5 +207,4 @@ def cambiaAutor(titulo,autor):
     cur.close()
     conn.commit()
     
-eliminaLibro("El Quijote")
-print existeLibro("El Quijote")
+
