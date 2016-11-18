@@ -58,7 +58,7 @@ def existeLibro(nombre):
     a=getLibro(nombre)
     if(a==()):
         return False
-    return True
+    return True   
 def getLibro(nombre):
     con=sqlite3.connect("Libreria.sqlite3")
     cur=con.cursor()
@@ -70,27 +70,33 @@ def getLibro(nombre):
     con.commit()
     return  aux
     
-def existeGenero(gen):
+def existeGenero(gene):
+    return (getGenero(gene)!=[])
+def getGenero(gen):
     con=sqlite3.connect("Libreria.sqlite3")
     cur=con.cursor()
     libros= cur.execute("SELECT * FROM Libros WHERE genero=?",(gen,))
     aux = ()
+    lista=[]
     for i in libros:
-        aux = i
+        lista.append(i)
     cur.close()
     con.commit()
-    return  aux
+    return  lista
 
-def existeAutor(nombre):
+
+def existeAutor(autor):
+    return (getAutor(autor)!=[])
+def getAutor(nombre):
     con=sqlite3.connect("Libreria.sqlite3")
     cur=con.cursor()
-    libros= cur.execute("SELECT * FROM Libros WHERE titulo=?",(nombre,))
-    aux = ()
+    libros= cur.execute("SELECT * FROM Libros WHERE autor=?",(nombre,))
+    lista=[]
     for i in libros:
-        aux = i
+        lista.append(i)
     cur.close()
     con.commit()
-    return  aux
+    return  lista
 
     
     
@@ -175,5 +181,4 @@ def ValidaLogin(name,password):
         return False
     cur.close()
     
-print existeLibro("El Quijote")
-    
+
