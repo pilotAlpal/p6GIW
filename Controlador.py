@@ -89,7 +89,7 @@ def main():
                 <form action="/eliminarLibro" >
                     <input value="Eliminar un libro" type="submit" />
                 </form>
-                <form action="/listaLibros" >
+                <form action="/modificarLibro" >
                     <input value="Modificar un libro" type="submit" />
                 </form>'''
     else:
@@ -157,6 +157,32 @@ def do_buscarLibroPorAutor():
         return template("template_lista.tpl", lista=datos)
     else:
         return "<p>Libro no existe</p>"
+@route('/modificarLibro')
+def modificarLibro():
+    user = request.get_cookie("cuenta", secret="123456789")
+    if user:
+        return '''<p>Modificar un libro</p>
+                  <form action="/modificarLibro" method="post">
+                    Antiguo nombre del libro: <input name="oldName" type="text" />
+                    Nuevo nombre del Libro: <input name="newName" type="text" />
+                    Autor: <input name="autor" type="text" />
+                    Genero:    <input name="genero" tyoe="text" />
+                    <input value="Introducir" type="submit" />
+                </form>'''
+    else: return "<p>Zona Restringida</p>" + inicio()
+@route('/modificarLibro', method='POST')
+def do_modificarLibro():
+    oldName = request.forms.get("oldName")
+    newName = request.forms.get("newName")
+    autor = request.forms.get("autor")
+    genero = request.forms.get("genero")
+    if BDController.existeLibro(oldName):
+        BDController.cambiaNombre(oldName, newName)
+        BDController.cambiaAutor(newName, autor)
+        BDController.cambiaGenero(newName, genero)
+        return "<p>Libro modificado correctamente</p>"+main()
+    else:
+        return "<p>No existe ese libro</p>" +modificarLibro()
 @route('/listaLibros')
 def listaLibros():
     user = request.get_cookie("cuenta", secret="123456789")
