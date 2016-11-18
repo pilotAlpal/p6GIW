@@ -78,15 +78,28 @@ def main():
             <form action="/listaLibros" >
                 <input value="Buscar un libro" type="submit" />
             </form>
-            <form action="/listaLibros" >
+            <form action="/eliminarLibro" >
                 <input value="Eliminar un libro" type="submit" />
             </form>
             <form action="/listaLibros" >
                 <input value="Modificar un libro" type="submit" />
             </form>'''
 
-            
-            
+@route('/eliminarLibro')
+def eliminarLibro():
+      return '''<p> Eliminar un libro </p>
+                <form action="/eliminarLibro" method="post">
+                    Libro: <input name="nombreLibro" type="text" />
+                    <input value="Eliminar" type="submit" />
+                </form>'''         
+@route('/eliminarLibro', method='POST')
+def do_eliminarLibro():
+    nombreLibro = request.forms.get('NombreLibro')
+    if BDController.existeLibro(nombreLibro):
+        BDController.BorrarLibro(nombreLibro)
+        return "<p>Libro borrado correctamente</p>" + main()
+    else:
+        return "<p>Libro no existe</p>"+ eliminarLibro()
 @route('/listaLibros')
 def listaLibros():
     lista = BDController.ListarLibros()
