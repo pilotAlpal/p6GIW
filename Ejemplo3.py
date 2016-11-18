@@ -1,5 +1,6 @@
-from bottle import Bottle,route,run,request
+from bottle import Bottle,route,run,request, template
 import BDController
+@route('/')
 @route('/begin')
 def inicio():
     return '''<p>Identificate o registrate</p>
@@ -64,11 +65,11 @@ def do_addBook():
         return "<p>Ya existe este libro</p>"
     else:
         BDController.AniadirLibro(nombreLibro, autor, genero)
-        return "<p>Libro añadido correctamente</p>"
+        return "<p>Libro introducido correctamente</p>"
 @route('/main')
 def main():
     return '''<p>Gestion de Biblioteca Online</p>
-            <form action="/listaLibros" >
+            <form action="/addBook" >
                 <input value="Introducir un libro" type="submit" />
             </form>
             <form action="/listaLibros" >
@@ -83,9 +84,14 @@ def main():
             <form action="/listaLibros" >
                 <input value="Modificar un libro" type="submit" />
             </form>'''
+
+            
+            
 @route('/listaLibros')
 def listaLibros():
-    return "<p>Lista de Libros</p>"
+    lista = BDController.ListarLibros()
+    print lista
+    return template('template_lista.tpl', lista=lista)
 BDController.CreateDBLibreria()
 BDController.InsertToDB()     
 run(host='localhost', port=8080)

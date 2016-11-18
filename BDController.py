@@ -57,7 +57,7 @@ def existeUsuario(username):
 def existeLibro(nombreLibro):
     con=sqlite3.connect("Libreria.sqlite3")
     cur=con.cursor()
-    libros= cur.execute("SELECT name FROM Libros WHERE name=?",(nombreLibro,))
+    libros= cur.execute("SELECT titulo FROM Libros WHERE titulo=?",(nombreLibro,))
     aux = ''
     for i in libros:
         aux = i
@@ -89,6 +89,7 @@ def ListarUsuarios():
     cur = conn.cursor()
     select = "SELECT * FROM Usuarios"
     cur.execute(select)
+    
     for (id,name,password) in cur.fetchall():
         print id,"-",name,"-",password
     cur.close()
@@ -100,9 +101,11 @@ def ListarLibros():
     cur = conn.cursor()
     select = "SELECT * FROM Libros"
     cur.execute(select)
+    v=[]
     for (id,titulo,autor,genero) in cur.fetchall():
-        print id,"-",titulo,"-",autor,"-",genero
+        v.append((titulo,autor,genero))
     cur.close()
+    return v
     
 
 def ActualizaLibro(id,titulo,autor,genero):
