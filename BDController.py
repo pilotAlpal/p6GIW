@@ -153,6 +153,12 @@ def ActualizaUsuario(id,name,password):
     cur.close()
     conn.commit()
 
+def eliminaLibro(nombreLibro):
+    conn = sqlite3.connect('Libreria.sqlite3')
+    cur = conn.cursor()
+    cur.execute("DELETE FROM Libros WHERE titulo=?",[nombreLibro])
+    cur.close()
+    conn.commit()
     
 def BorrarLibro(id):
     conn = sqlite3.connect('Libreria.sqlite3')
@@ -200,4 +206,6 @@ def cambiaAutor(titulo,autor):
     cur.execute("UPDATE Libros SET autor=? WHERE titulo=?",(autor,titulo))    
     cur.close()
     conn.commit()
-
+    
+eliminaLibro("El Quijote")
+print existeLibro("El Quijote")
