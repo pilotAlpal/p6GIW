@@ -46,7 +46,7 @@ def do_registro():
     else:
         
         BDController.AniadirUsuario(username, password)  
-        return "<p>REGISTRO CORRECTO</p>" + login()
+        return "<p>REGISTRO CORRECTO</p>" + main()
         
 @route('/addBook')
 def addBook():
@@ -75,7 +75,7 @@ def main():
             <form action="/listaLibros" >
                 <input value="Mostrar todos los libros" type="submit" />
             </form>
-            <form action="/listaLibros" >
+            <form action="/buscarLibro" >
                 <input value="Buscar un libro" type="submit" />
             </form>
             <form action="/eliminarLibro" >
@@ -94,16 +94,39 @@ def eliminarLibro():
                 </form>'''         
 @route('/eliminarLibro', method='POST')
 def do_eliminarLibro():
-    nombreLibro = request.forms.get('NombreLibro')
+    nombreLibro = request.forms.get('nombreLibro')
     if BDController.existeLibro(nombreLibro):
         BDController.BorrarLibro(nombreLibro)
         return "<p>Libro borrado correctamente</p>" + main()
     else:
         return "<p>Libro no existe</p>"+ eliminarLibro()
+        
+@route('/buscarLibro')
+def buscarLibro():
+    return '''<p>Buscar un Libro</p>
+              <form action="/buscarLibro" method="post">
+                    Titulo: <input name="nombreLibro" type="text" />
+                    <input value="Buscar" type="submit" />
+                </form> 
+              <form action="/buscarLibroPorGenero" method="post">
+                    Genero: <input name="genero" type="text" />
+                    <input value="Buscar" type="submit" />
+                </form>
+              <form action="/buscarLibroPorAutor" method="post">
+                    Autor: <input name="autor" type="text" />
+                    <input value="Buscar" type="submit" />
+                </form>'''
+@route('/buscarLibro', method= 'POST')
+def do_buscarLibro():
+    nombreLibro = request.forms.get('nombreLibro')
+    if BDController.existeLibro(nombreLibro):
+        datos = BDController.getLibro(nombreLibro)
+        return template("template_lista.tpl", lista=datos)
+    else:
+        return "<p>Libro no existe</p>"
 @route('/listaLibros')
 def listaLibros():
     lista = BDController.ListarLibros()
-    print lista
     return template('template_lista.tpl', lista=lista)
 BDController.CreateDBLibreria()
 BDController.InsertToDB()     
