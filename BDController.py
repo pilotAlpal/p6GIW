@@ -76,7 +76,6 @@ def getGenero(gen):
     con=sqlite3.connect("Libreria.sqlite3")
     cur=con.cursor()
     libros= cur.execute("SELECT * FROM Libros WHERE genero=?",(gen,))
-    aux = ()
     lista=[]
     for i in libros:
         lista.append(i)
@@ -181,4 +180,24 @@ def ValidaLogin(name,password):
         return False
     cur.close()
     
+def cambiaNombre(oldName,newName):
+    conn = sqlite3.connect('Libreria.sqlite3')
+    cur = conn.cursor()
+    cur.execute("UPDATE Libros SET titulo=? WHERE titulo=?",(newName,oldName))    
+    cur.close()
+    conn.commit()    
+
+def cambiaGenero(titulo,newGender):
+    conn = sqlite3.connect('Libreria.sqlite3')
+    cur = conn.cursor()
+    cur.execute("UPDATE Libros SET genero=? WHERE titulo=?",(newGender,titulo))    
+    cur.close()
+    conn.commit()
+
+def cambiaAutor(titulo,autor):    
+    conn = sqlite3.connect('Libreria.sqlite3')
+    cur = conn.cursor()
+    cur.execute("UPDATE Libros SET autor=? WHERE titulo=?",(autor,titulo))    
+    cur.close()
+    conn.commit()
 
