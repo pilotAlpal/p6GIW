@@ -11,7 +11,7 @@
     </header>
     <ul>
     % for libro in lista:
-      <li> {{libro[0]}} </li>
+      <li> {{libro}} </li>
     % end
     </ul>    
 </body>

@@ -1,4 +1,4 @@
-from bottle import Bottle,route,run,request, template
+from bottle import Bottle,route,run,request, template, response
 import BDController
 @route('/')
 @route('/begin')
@@ -24,6 +24,7 @@ def do_login():
     username = request.forms.get('usuario')
     password = request.forms.get('password')
     if BDController.ValidaLogin(username, password):
+        response.set_cookie("cuenta", username, secret="123456789")
         return "<p>Login correcto</p>" + main()
     else:
         return "<p>Login incorrecto.</p>"
@@ -46,52 +47,64 @@ def do_registro():
     else:
         
         BDController.AniadirUsuario(username, password)  
+        response.set_cookie("cuenta", username, secret="123456789")
         return "<p>REGISTRO CORRECTO</p>" + main()
         
 @route('/addBook')
 def addBook():
-    return '''<form action="/addBook" method="post">
-            Nombre del Libro: <input name="nombreLibro" type="text" />
-            Autor: <input name="autor" type="text" />
-            Genero    <input name="genero" tyoe="text" />
-            <input value="Login" type="submit" />
-        </form>'''
+    user = request.get_cookie("cuenta", secret="123456789")
+    if user:
+        return '''<form action="/addBook" method="post">
+                Nombre del Libro: <input name="nombreLibro" type="text" />
+                Autor: <input name="autor" type="text" />
+                Genero    <input name="genero" tyoe="text" />
+                <input value="Login" type="submit" />
+            </form>'''
+    else:
+        return "<p>Zona Restringida</p>" + inicio()
 @route('/addBook', method='POST')
 def do_addBook():
     nombreLibro = request.forms.get('nombreLibro')
     genero = request.forms.get('genero')
     autor = request.forms.get('autor')
     if BDController.existeLibro(nombreLibro):
-        return "<p>Ya existe este libro</p>"
+        return "<p>Ya existe este libro</p>" + addBook()
     else:
         BDController.AniadirLibro(nombreLibro, autor, genero)
-        return "<p>Libro introducido correctamente</p>"
+        return "<p>Libro introducido correctamente</p>" + main()
 @route('/main')
 def main():
-    return '''<p>Gestion de Biblioteca Online</p>
-            <form action="/addBook" >
-                <input value="Introducir un libro" type="submit" />
-            </form>
-            <form action="/listaLibros" >
-                <input value="Mostrar todos los libros" type="submit" />
-            </form>
-            <form action="/buscarLibro" >
-                <input value="Buscar un libro" type="submit" />
-            </form>
-            <form action="/eliminarLibro" >
-                <input value="Eliminar un libro" type="submit" />
-            </form>
-            <form action="/listaLibros" >
-                <input value="Modificar un libro" type="submit" />
-            </form>'''
-
+    user = request.get_cookie("cuenta", secret="123456789")
+    if user:
+        return '''<p>Gestion de Biblioteca Online</p>
+                <form action="/addBook" >
+                    <input value="Introducir un libro" type="submit" />
+                </form>
+                <form action="/listaLibros" >
+                    <input value="Mostrar todos los libros" type="submit" />
+                </form>
+                <form action="/buscarLibro" >
+                    <input value="Buscar un libro" type="submit" />
+                </form>
+                <form action="/eliminarLibro" >
+                    <input value="Eliminar un libro" type="submit" />
+                </form>
+                <form action="/listaLibros" >
+                    <input value="Modificar un libro" type="submit" />
+                </form>'''
+    else:
+        return "<p>Zona Restringida</p>" + inicio()
 @route('/eliminarLibro')
 def eliminarLibro():
-      return '''<p> Eliminar un libro </p>
-                <form action="/eliminarLibro" method="post">
-                    Libro: <input name="nombreLibro" type="text" />
-                    <input value="Eliminar" type="submit" />
-                </form>'''         
+    user = request.get_cookie("cuenta", secret="123456789")
+    if user:
+        return '''<p> Eliminar un libro </p>
+                    <form action="/eliminarLibro" method="post">
+                        Libro: <input name="nombreLibro" type="text" />
+                        <input value="Eliminar" type="submit" />
+                    </form>'''
+    else: return "<p>Zona Restringida</p>" + inicio()
+    
 @route('/eliminarLibro', method='POST')
 def do_eliminarLibro():
     nombreLibro = request.forms.get('nombreLibro')
@@ -103,19 +116,23 @@ def do_eliminarLibro():
         
 @route('/buscarLibro')
 def buscarLibro():
-    return '''<p>Buscar un Libro</p>
-              <form action="/buscarLibro" method="post">
-                    Titulo: <input name="nombreLibro" type="text" />
-                    <input value="Buscar" type="submit" />
-                </form> 
-              <form action="/buscarLibroPorGenero" method="post">
-                    Genero: <input name="genero" type="text" />
-                    <input value="Buscar" type="submit" />
-                </form>
-              <form action="/buscarLibroPorAutor" method="post">
-                    Autor: <input name="autor" type="text" />
-                    <input value="Buscar" type="submit" />
-                </form>'''
+    user = request.get_cookie("cuenta", secret="123456789")
+    if user:
+        return '''<p>Buscar un Libro</p>
+                  <form action="/buscarLibro" method="post">
+                        Titulo: <input name="nombreLibro" type="text" />
+                        <input value="Buscar" type="submit" />
+                    </form> 
+                  <form action="/buscarLibroPorGenero" method="post">
+                        Genero: <input name="genero" type="text" />
+                        <input value="Buscar" type="submit" />
+                    </form>
+                  <form action="/buscarLibroPorAutor" method="post">
+                        Autor: <input name="autor" type="text" />
+                        <input value="Buscar" type="submit" />
+                    </form>'''
+    else:
+        return "<p>Zona Restringida</p>" + inicio()
 @route('/buscarLibro', method= 'POST')
 def do_buscarLibro():
     nombreLibro = request.forms.get('nombreLibro')
@@ -126,8 +143,11 @@ def do_buscarLibro():
         return "<p>Libro no existe</p>"
 @route('/listaLibros')
 def listaLibros():
-    lista = BDController.ListarLibros()
-    return template('template_lista.tpl', lista=lista)
+    user = request.get_cookie("cuenta", secret="123456789")
+    if user:
+        lista = BDController.ListarLibros()
+        return template('template_lista.tpl', lista=lista)
+    else: return "<p>Zona Restringida</p>" + inicio()
 BDController.CreateDBLibreria()
 BDController.InsertToDB()     
 run(host='localhost', port=8080)
